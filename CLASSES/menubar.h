@@ -10,14 +10,15 @@ class MenuBar : public QMenuBar
 {
     Q_OBJECT
 public:
-    MenuBar(QMainWindow* window);
+    MenuBar();
     ~MenuBar();
 
     // Accessors
+    static QMenuBar* getMenuBar();
     static QMenu* getMenu(uint index);
 
 private:
-    static QMenuBar* mainMenu;
+    static QMenuBar* bar;
 
     static const uint menuc = 3;    // file, view, command line
     static const uint actc = 9;
@@ -32,6 +33,7 @@ private:
     static void initActions();
     static void initMenues();
     static void bindActions();
+    static void bindMenues();
 
     // Destruct
     static void deleteActions();
