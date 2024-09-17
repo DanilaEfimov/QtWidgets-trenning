@@ -6,6 +6,11 @@
 #include<QAction>
 #include<QMainWindow>
 
+enum Names{
+    newSession, save, whiteTheme, blackTheme,
+    rightMode, leftMode, help, history
+};
+
 class MenuBar : public QMenuBar
 {
     Q_OBJECT
@@ -16,12 +21,13 @@ public:
     // Accessors
     static QMenuBar* getMenuBar();
     static QMenu* getMenu(uint index);
+    static QAction* getAction(uint index);
 
 private:
     static QMenuBar* bar;
 
     static const uint menuc = 3;    // file, view, command line
-    static const uint actc = 9;
+    static const uint actc = 8;
     // file: save, new session;
     // view: white theme, black theme, right mode, left mode;
     // command line: help, open line, history;
@@ -34,11 +40,22 @@ private:
     static void initMenues();
     static void bindActions();
     static void bindMenues();
+    // Binding
+    static void bindActionSignals();
 
     // Destruct
     static void deleteActions();
     static void deleteMenues();
 
+signals:
+    void newSession();
+    void save();
+    void whiteTheme();
+    void blackTheme();
+    void rightMode();
+    void leftMode();
+    void help();
+    void history();
 };
 
 #endif // MENUBAR_H

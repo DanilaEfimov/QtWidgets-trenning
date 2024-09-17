@@ -1,4 +1,4 @@
-
+#include<QDebug>
 #include "menubar.h"
 
 QMenu** MenuBar::menues = nullptr;
@@ -12,6 +12,8 @@ MenuBar::MenuBar() {
     initMenues();
     bindActions();
     bindMenues();
+
+    this->bindActionSignals();
 }
 
 MenuBar::~MenuBar() {
@@ -20,12 +22,13 @@ MenuBar::~MenuBar() {
     delete bar;
 }
 
+//  ----------  ACCESSORS   ----------
+
 QMenuBar *MenuBar::getMenuBar() {
     return bar;
 }
 
-QMenu *MenuBar::getMenu(uint index)
-{
+QMenu *MenuBar::getMenu(uint index) {
     if(index >= menuc){
         return nullptr;
     }
@@ -34,13 +37,24 @@ QMenu *MenuBar::getMenu(uint index)
     }
 }
 
+QAction *MenuBar::getAction(uint index) {
+    if(index >= actc){
+        return nullptr;
+    }
+    else{
+        return actions[index];
+    }
+}
+
+//  ----------  INITIALIZE  ----------
+
 void MenuBar::initActions()
 {
     actions = new QAction*[actc];
     for(uint i = 0; i < actc; i++){
         actions[i] = new QAction;
     }
-    // set names
+    // set texts
     actions[0]->setText("New Session"); // for file menu
     actions[1]->setText("Save");
     actions[2]->setText("White theme"); // for view menu
@@ -48,8 +62,16 @@ void MenuBar::initActions()
     actions[4]->setText("Right mode");
     actions[5]->setText("Left mode");
     actions[6]->setText("Help");        // for line menu
-    actions[7]->setText("Open line");
-    actions[8]->setText("History");
+    actions[7]->setText("History");
+
+    // default is actived right mode & black theme:
+    actions[3]->setCheckable(true);     // Black Theme
+    actions[3]->setChecked(true);
+    actions[4]->setCheckable(true);     // Right Mode
+    actions[4]->setChecked(true);
+
+    actions[2]->setCheckable(true);     // White Theme
+    actions[5]->setCheckable(true);     // Left Mode
 }
 
 void MenuBar::initMenues()
@@ -74,7 +96,6 @@ void MenuBar::bindActions()
     menues[1]->addAction(actions[5]);
     menues[2]->addAction(actions[6]);   // line menu
     menues[2]->addAction(actions[7]);
-    menues[2]->addAction(actions[8]);
 }
 
 void MenuBar::bindMenues()
@@ -84,6 +105,17 @@ void MenuBar::bindMenues()
         bar->addMenu(menues[i]);
     }
 }
+
+//  ----------  BINDING ----------
+
+void MenuBar::bindActionSignals() {
+    connect(actions[Names::whiteTheme], SIGNAL(whiteTheme()), actions[Names::blackTheme], SLOT(triggered(bool)));
+    connect(actions[Names::blackTheme], SIGNAL(blackTheme()), actions[Names::whiteTheme], SLOT(triggered(bool)));
+    connect(actions[Names::rightMode],  SIGNAL(rightMode()),  actions[Names::leftMode],   SLOT(triggered(bool)));
+    connect(actions[Names::leftMode],   SIGNAL(leftMode()),   actions[Names::rightMode],  SLOT(triggered(bool)));
+}
+
+//  ----------  DESTRUCTING ----------
 
 void MenuBar::deleteActions() {
     for(uint i = 0; i < actc; i++){
@@ -97,4 +129,54 @@ void MenuBar::deleteMenues() {
         delete menues[i];
     }
     delete[] menues;
+}
+
+//  ----------  SIGNALS ----------
+
+void MenuBar::newSession(){
+
+}
+
+void MenuBar::save(){
+
+}
+
+void MenuBar::whiteTheme(){
+    bool state = actions[Names::whiteTheme]->isChecked();
+    actions[Names::whiteTheme]->setChecked(!state);
+    actions[Names::blackTheme]->setChecked(state);
+
+    qDebug() << "WHITETHEME\n";
+}
+
+void MenuBar::blackTheme(){
+    bool state = actions[Names::blackTheme]->isChecked();
+    actions[Names::whiteTheme]->setChecked(state);
+    actions[Names::blackTheme]->setChecked(!state);
+
+    qDebug() << "BLACKTHEME\n";
+}
+
+void MenuBar::rightMode(){
+    bool state = actions[Names::rightMode]->isChecked();
+    actions[Names::rightMode]->setChecked(!state);
+    actions[Names::leftMode]->setChecked(state);
+
+    qDebug() << "RIGHTMODE\n";
+}
+
+void MenuBar::leftMode(){
+    bool state = actions[Names::leftMode]->isChecked();
+    actions[Names::rightMode]->setChecked(state);
+    actions[Names::leftMode]->setChecked(!state);
+
+    qDebug() << "LEFTMODE\n";
+}
+
+void MenuBar::help(){
+
+}
+
+void MenuBar::history(){
+
 }
