@@ -1,7 +1,6 @@
 #include <QApplication>
-#include <QGraphicsScene>
-#include "MyRect.h"
-#include <QGraphicsView>
+#include<QTimer>
+#include"test.h"
 
 /*
 Preregs:
@@ -16,34 +15,40 @@ Preregs:
 -events (keyPressEvent() and QKeyEvent)
 -event propogation system
 -QDebug
+3 Tutorial topics:
+-Qt memory managment
+-Parent child relationship
 */
+
+// settings in the constructor
+Test* getTest(QObject* parent){
+    return new Test(parent);
+    // no memory lossing
+    // due to every Object is unique
+    // very simple to find parent or revese
+    // and delete all family
+}
+
+Test* getTest(){
+    return new Test();
+    // memory lossing
+}
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    // create a scene
-    QGraphicsScene* scene = new QGraphicsScene();
+    QTimer timer;
+    timer.singleShot(3000, &a, &QCoreApplication::quit);
 
-    // create an item to put into scene
-    MyRect* rect = new MyRect(); // default 0 by 0 px
-    rect->setRect(0,0, 100, 100); // _x, _y width, height
+    Test* test = getTest(&a);
+    test->setObjectName("Spot");
 
-    // add the item to the scene
-    scene->addItem(rect);
+    Test* cat = getTest();
+    cat->setObjectName("Cat");  // here cat not contained in parent tree Qt
+    cat->setParent(&a);
 
-    // make rect focussible
-    rect->setFlag(QGraphicsItem::ItemIsFocusable);
-    rect->setFocus();
-
-    // here we actually nothing see
-
-    // add a view
-    QGraphicsView* view = new QGraphicsView(scene);
-    // synonym: view->setScene(scene);
-
-    // default QGraphicsView is a widget and invisible
-    view->show();
-
-    return a.exec();
+    int value = a.exec();
+    qInfo() << "Exit code: " << value;
+    return value;
 }

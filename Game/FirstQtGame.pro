@@ -10,10 +10,12 @@ CONFIG += c++17
 
 SOURCES += \
     MyRect.cpp \
-    main.cpp
+    main.cpp \
+    test.cpp
 
 HEADERS += \
-    MyRect.h
+    MyRect.h \
+    test.h
 
 FORMS +=
 
