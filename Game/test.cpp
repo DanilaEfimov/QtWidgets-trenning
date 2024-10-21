@@ -9,3 +9,8 @@ Test::Test(QObject *parent)
 Test::~Test() {
     qInfo() << this << "Destructed" << this->parent();
 }
+
+void Test::massege(QString value)
+{
+    qInfo() << value;
+}

@@ -10,6 +10,8 @@ class Test : public QObject
 public:
     explicit Test(QObject *parent = nullptr);
     ~Test();
+
+    void massege(QString value = ""); // Unicode included in Qt
 signals:
 };
 
