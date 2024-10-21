@@ -1,5 +1,4 @@
 #include <QApplication>
-#include<QTimer>
 #include"test.h"
 
 /*
@@ -18,37 +17,40 @@ Preregs:
 3 Tutorial topics:
 -Qt memory managment
 -Parent child relationship
+4 Tutorial topics:
+-qDeleteAll
+-delete in qt
 */
 
-// settings in the constructor
-Test* getTest(QObject* parent){
-    return new Test(parent);
-    // no memory lossing
-    // due to every Object is unique
-    // very simple to find parent or revese
-    // and delete all family
+typedef QList<Test*> testList;
+
+testList getList(){
+    testList list;
+    for(int i = 0; i < 5; i++){
+        list.append(new Test());
+        list.last()->setObjectName("Test " + QString::number(i));
+    }
+    return list;
 }
 
-Test* getTest(){
-    return new Test();
-    // memory lossing
+void Display(testList list){
+    foreach(Test* item, list){
+        qInfo() << item;
+    }
 }
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QTimer timer;
-    timer.singleShot(3000, &a, &QCoreApplication::quit);
+    testList list = getList();
+    Display(list);
 
-    Test* test = getTest(&a);
-    test->setObjectName("Spot");
+    qInfo() << "Deleting...";
+    qDeleteAll(list.begin(), list.end());
+    list.clear();
 
-    Test* cat = getTest();
-    cat->setObjectName("Cat");  // here cat not contained in parent tree Qt
-    cat->setParent(&a);
+    Display(list);
 
-    int value = a.exec();
-    qInfo() << "Exit code: " << value;
-    return value;
+    return a.exec();
 }
